@@ -1,0 +1,83 @@
+# Use CUDA development base image with Ubuntu 20.04
+FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    TZ=Europe/Berlin \
+    CUDA_HOME=/usr/local/cuda \
+    CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda \
+    CUDA_INCLUDE_DIRS=/usr/local/cuda/include \
+    CUDA_BIN_PATH=/usr/local/cuda/bin \
+    CUDA_LIBRARIES=/usr/local/cuda/lib64 \
+    FORCE_CUDA="1" \
+    TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0 7.5 8.0 8.6+PTX" \
+    PATH=/usr/local/cuda/bin:$PATH \
+    LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+# Install basic dependencies including build tools
+RUN apt-get update && apt-get install -y \
+    git \
+    software-properties-common \
+    build-essential \
+    cmake \
+    pkg-config \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libglib2.0-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python 3.8 and development dependencies
+RUN add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && apt-get install -y \
+    python3.8 \
+    python3.8-dev \
+    python3.8-distutils \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set Python 3.8 as default
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1
+
+# Upgrade pip
+RUN python -m pip install --upgrade pip setuptools wheel
+
+# Install PyTorch 1.11.0 and torchvision 0.12.0 with CUDA 11.3 support
+RUN pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0+cu113 \
+    --extra-index-url https://download.pytorch.org/whl/cu113
+
+# Install other Python dependencies
+RUN pip install Cython "numpy<1.24" timm "shapely<2.0"
+
+# Install additional dependencies that might be needed for CoBEVT
+RUN pip install setuptools-scm pybind11
+
+# Install logger
+RUN pip install loguru rembg onnxruntime
+
+# Verify Python and package installation
+RUN python --version && \
+    python -c "import torch; print(f'PyTorch version: {torch.__version__}'); print(f'CUDA available: {torch.cuda.is_available()}')" && \
+    python -c "import numpy; print(f'NumPy version: {numpy.__version__}')"
+
+# Set working directory
+WORKDIR /setup
+
+# Clone and install CoBEVT dependencies
+RUN git clone https://github.com/DerrickXuNu/CoBEVT.git
+
+# Build CoBEVT with proper environment variables and build approach
+RUN cd CoBEVT/opv2v && \
+    python -c "import sys; print(f'Using Python: {sys.executable}')" && \
+    python -c "import numpy; print(f'NumPy include dir: {numpy.get_include()}')" && \
+    export CFLAGS="-I$(python -c 'import numpy; print(numpy.get_include())')" && \
+    export CPPFLAGS="-I$(python -c 'import numpy; print(numpy.get_include())')" && \
+    pip install -e . --verbose
+
+WORKDIR /workspace
+
+# Set the default command
+CMD ["/bin/bash"]
