@@ -29,7 +29,7 @@ This repository contains the implementation of CIAK (Camera-feed Injection Attac
 THE REPOSITORY WILL BE AVAILABLE AFTER ACCEPTANCE TO MAINTAIN DOUBLE BLIND 
 ```bash
 git clone https://...
-cd CIAK-Camera-feed-Injection-Attack
+cd CIAK
 ```
 
 ### Build docker container
