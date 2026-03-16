@@ -2,31 +2,11 @@
 
 This repository contains the implementation of CIAK (Camera-feed Injection Attack), a framework for evaluating the robustness of cooperative perception systems against camera feed tampering attacks. CIAK is designed to inject adversarial objects into camera feeds of connected autonomous vehicles (CAVs) to assess the impact on collaborative perception performance.
 
-## Project Structure
-<EDIT_HERE update the dir tree after finalizing>
-```
-.
-|-- CoBEVT
-|-- README.md
-|-- __init__.py
-|-- __pycache__
-|-- assets
-|-- attacker.py
-|-- custom_logger.py
-|-- helpers.py
-|-- main.py
-|-- model_snapshots
-|-- preprocess.py
-|-- scripts
-|-- tbd.py
-`-- tooling
-```
 
 
 ## Installation
 
 ### Clone the repository:
-THE REPOSITORY WILL BE AVAILABLE AFTER ACCEPTANCE TO MAINTAIN DOUBLE BLIND 
 ```bash
 git clone https://...
 cd CIAK
@@ -56,7 +36,7 @@ export PYTHONPATH=$PYTHONPATH:/workspace/CoBEVT/opv2v
 - [dis-bg-remover](https://test.com)
 
 ### Download and install Dataset Modifications
-Download the dataset modifications from [here](https://os5.mycloud.com/action/share/e2bc8933-baa6-42f4-b503-b8970c1ac41d).
+Download the dataset modifications from [here](https://mediatum.ub.tum.de/1846877).
 
 Copy the contents of `<dataset_modification_src_dir>/dataset_modifications` to `<CIAK_src_dir>/dataset_modifications`.
 
