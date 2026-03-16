@@ -71,8 +71,6 @@ attacker.run_pipeline(
 
 If preprocess is set to true, the background of the image containing the to-be-injected vehicle is automatically removed using rembg.
 
-## Run the inference
-<EDIT_HERE Add instructions to put the modified images into the dataset>
 
 ### CoBEVT OPV2V Track
 follow the [Installation Instructions here](https://github.com/DerrickXuNu/CoBEVT/tree/main/opv2v)
